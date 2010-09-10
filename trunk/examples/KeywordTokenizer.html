@@ -1,0 +1,446 @@
+<!DOCTYPE HTML
+    PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd"
+>
+<!--
+/*
+    Copyright Roland Bouman
+    Roland.Bouman@gmail.com
+    http://rpbouman.blogspot.com/
+ 
+    This file is part of parjser: http://code.google.com/p/parjser
+
+    parjser is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3
+    of the License, or (at your option) any later version.
+
+    parjser is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Lesser Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with parjser.  If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Keyword Tokenizer Tester</title>
+        <link rel="stylesheet" type="text/css" href="example-styles.css" />
+    </head>
+    <body>
+    
+        <div style="width: 49%; height:100%; float:left; position: absolute">Configuration:
+            <textarea rows="5" style="width: 100%; height:100%; float:left" id="configuration"
+>
+{
+    tokens: {
+        whitespace: /\s+|--[^\n]*\n|\/\*([^*]|\*(?!\/))*\*\//,
+        string: /[xX]?'([^']|'')*'/,
+        identifier: /[a-z_][\w_]*|"([^"]|"")*"|`([^`]|``)*`|\[[^\]]\]/,
+        lparen: /\(/,
+        rparen: /\)/,
+        comma: /,/,
+        dot: /\./,
+        semi: /;/,
+        asterisk: /\*/,
+        slash: /\//,
+        mod: /%/,
+        number: /[\-+]?\d*\.?\d+([eE][\-+]?\d+)?/,
+        notequals: /!=/,
+        ltgt: /<>/,
+        lteq: /<=/,
+        gteq: />=/,
+        lshift: /<</,
+        rshift: />>/,
+        lt: /</,
+        gt: />/,
+        concat: /\|\|/,
+        bitand: /&/,
+        bitor: /\|/,
+        plus: /\+/,
+        minus: /-/,
+        equals: /\=/
+    },
+    keywords: {
+        identifier: {
+            ABORT: "kw_abort",
+            ACTION: "ACTION", ADD: "ADD",
+            AFTER: "AFTER", ALL: "ALL", ALTER: "ALTER",
+            ANALYZE: "ANALYZE", AND: "AND", AS: "AS",
+            ASC: "ASC", ATTACH: "ATTACH", AUTOINCREMENT: "AUTOINCREMENT",
+            BEFORE: "BEFORE", BEGIN: "BEGIN", BETWEEN: "BETWEEN", BY: "BY",
+            CASCADE: "CASCADE", CASE: "CASE", CAST: "CAST", CHECK: "CHECK",
+            COLLATE: "COLLATE", COLUMN: "COLUMN", COMMIT: "COMMIT",
+            CONFLICT: "CONFLICT", CONSTRAINT: "CONSTRAINT", CREATE: "CREATE",
+            CROSS: "CROSS", CURRENT_DATE: "CURRENT_DATE",
+            CURRENT_TIME: "CURRENT_TIME", CURRENT_TIMESTAMP: "CURRENT_TIMESTAMP",
+            DATABASE: "DATABASE", DEFAULT: "DEFAULT", DEFERRABLE: "DEFERRABLE",
+            DEFERRED: "DEFERRED", DELETE: "DELETE", DESC: "DESC",
+            DETACH: "DETACH", DISTINCT: "DISTINCT", DROP: "DROP",
+            EACH: "EACH", ELSE: "ELSE", END: "END", ESCAPE: "ESCAPE",
+            EXCEPT: "EXCEPT", EXCLUSIVE: "EXCLUSIVE", EXISTS: "EXISTS",
+            EXPLAIN: "EXPLAIN", FAIL: "FAIL", FOR: "FOR",
+            FOREIGN: "FOREIGN", FROM: "FROM", FULL: "FULL",
+            GLOB: "GLOB", GROUP: "GROUP", HAVING: "HAVING",
+            IF: "IF", IGNORE: "IGNORE", IMMEDIATE: "IMMEDIATE",
+            IN: "IN", INDEX: "INDEX", INDEXED: "INDEXED",
+            INITIALLY: "INITIALLY", INNER: "INNER", INSERT: "INSERT",
+            INSTEAD: "INSTEAD", INTERSECT: "INTERSECT", INTO: "INTO",
+            IS: "IS", ISNULL: "ISNULL", JOIN: "JOIN", KEY: "KEY",
+            LEFT: "LEFT", LIKE: "LIKE", LIMIT: "LIMIT", MATCH: "MATCH",
+            NATURAL: "NATURAL", NO: "NO", NOT: "NOT", NOTNULL: "NOTNULL",
+            NULL: "NULL", OF: "OF", OFFSET: "OFFSET", ON: "ON", OR: "OR",
+            ORDER: "ORDER", OUTER: "OUTER", PLAN: "PLAN", PRAGMA: "PRAGMA",
+            PRIMARY: "PRIMARY", QUERY: "QUERY", RAISE: "RAISE",
+            REFERENCES: "REFERENCES", REGEXP: "REGEXP", REINDEX: "REINDEX",
+            RELEASE: "RELEASE", RENAME: "RENAME", REPLACE: "REPLACE",
+            RESTRICT: "RESTRICT", RIGHT: "RIGHT", ROLLBACK: "ROLLBACK",
+            ROW: "ROW", SAVEPOINT: "SAVEPOINT", SELECT: "SELECT",
+            SET: "SET", TABLE: "TABLE", TEMP: "TEMP",
+            TEMPORARY: "TEMPORARY", THEN: "THEN", TO: "TO",
+            TRANSACTION: "TRANSACTION", TRIGGER: "TRIGGER", UNION: "UNION",
+            UNIQUE: "UNIQUE", UPDATE: "UPDATE", USING: "USING",
+            VACUUM: "VACUUM", VALUES: "VALUES", VIEW: "VIEW",
+            VIRTUAL: "VIRTUAL", WHEN: "WHEN", WHERE: "WHERE"
+        }
+    },
+    ignoreCase: true,
+    ignoreTokens: {"whitespace": true}
+}
+
+            </textarea>
+        </div>
+        <div style="width: 49%; height:100%; left: 51%; position: absolute">
+            <button id="tokenize">Tokenize</button>
+            Input Text:
+            <textarea style="height:33%; width:99%" id="input">
+CREATE TABLE actor (
+  actor_id integer primary key autoincrement,
+  first_name varchar(45) NOT NULL,
+  last_name varchar(45) NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE address (
+  address_id integer primary key autoincrement,
+  address varchar(50) NOT NULL,
+  address2 varchar(50) DEFAULT NULL,
+  district varchar(20) NOT NULL,
+  city_id smallint(5)  NOT NULL,
+  postal_code varchar(10) DEFAULT NULL,
+  phone varchar(20) NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_address_city FOREIGN KEY (city_id) REFERENCES city (city_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE category (
+  category_id integer primary key autoincrement,
+  name varchar(25) NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE city (
+  city_id integer primary key autoincrement,
+  city varchar(50) NOT NULL,
+  country_id smallint(5)  NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_city_country FOREIGN KEY (country_id) REFERENCES country (country_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE country (
+  country_id integer primary key autoincrement,
+  country varchar(50) NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE customer (
+  customer_id integer primary key autoincrement,
+  store_id tinyint(3)  NOT NULL,
+  first_name varchar(45) NOT NULL,
+  last_name varchar(45) NOT NULL,
+  email varchar(50) DEFAULT NULL,
+  address_id smallint(5)  NOT NULL,
+  active tinyint(1) NOT NULL DEFAULT '1',
+  create_date datetime NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_customer_address FOREIGN KEY (address_id) REFERENCES address (address_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_customer_store FOREIGN KEY (store_id) REFERENCES store (store_id) ON UPDATE CASCADE
+);
+
+CREATE VIEW customer_list
+AS
+SELECT cu.customer_id AS ID, 
+       cu.first_name||' '||cu.last_name AS name, 
+       a.address AS address, 
+       a.postal_code AS zip_code,
+       a.phone AS phone, 
+       city.city AS city, 
+       country.country AS country, 
+       case cu.active when 1 then active else '' end AS notes, 
+       cu.store_id AS SID
+FROM customer AS cu 
+JOIN address AS a 
+ON cu.address_id = a.address_id 
+JOIN city 
+ON a.city_id = city.city_id
+JOIN country 
+ON city.country_id = country.country_id
+;
+
+CREATE TABLE film (
+  film_id integer primary key autoincrement,
+  title varchar(255) NOT NULL,
+  description text,
+  release_year year(4) DEFAULT NULL,
+  language_id tinyint(3)  NOT NULL,
+  original_language_id tinyint(3)  DEFAULT NULL,
+  rental_duration tinyint(3)  NOT NULL DEFAULT 3,
+  rental_rate decimal(4,2) NOT NULL DEFAULT 4.99,
+  length smallint(5)  DEFAULT NULL,
+  replacement_cost decimal(5,2) NOT NULL DEFAULT 19.99,
+  rating varchar(20) DEFAULT 'G',
+  special_features text DEFAULT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_film_language FOREIGN KEY (language_id) REFERENCES language (language_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_film_language_original FOREIGN KEY (original_language_id) REFERENCES language (language_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE film_actor (
+  actor_id smallint(5)  NOT NULL,
+  film_id smallint(5)  NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (actor_id,film_id),
+  CONSTRAINT fk_film_actor_actor FOREIGN KEY (actor_id) REFERENCES actor (actor_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_film_actor_film FOREIGN KEY (film_id) REFERENCES film (film_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE film_category (
+  film_id smallint(5)  NOT NULL,
+  category_id tinyint(3)  NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (film_id,category_id),
+  CONSTRAINT fk_film_category_film FOREIGN KEY (film_id) REFERENCES film (film_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_film_category_category FOREIGN KEY (category_id) REFERENCES category (category_id) ON UPDATE CASCADE
+);
+
+CREATE VIEW film_list
+AS
+SELECT film.film_id AS FID, 
+       film.title AS title, 
+       film.description AS description, 
+       category.name AS category, 
+       film.rental_rate AS price,
+       film.length AS length, 
+       film.rating AS rating, 
+       GROUP_CONCAT(actor.first_name||' '||actor.last_name, ', ') AS actors
+FROM   category 
+LEFT JOIN film_category 
+ON category.category_id = film_category.category_id 
+LEFT JOIN film 
+ON film_category.film_id = film.film_id
+JOIN film_actor 
+ON film.film_id = film_actor.film_id
+JOIN actor 
+ON film_actor.actor_id = actor.actor_id
+GROUP BY film.film_id;
+
+CREATE TABLE inventory (
+  inventory_id integer primary key autoincrement,
+  film_id smallint(5)  NOT NULL,
+  store_id tinyint(3)  NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_inventory_store FOREIGN KEY (store_id) REFERENCES store (store_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_inventory_film FOREIGN KEY (film_id) REFERENCES film (film_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE language (
+  language_id integer primary key autoincrement,
+  name char(20) NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE VIEW nicer_but_slower_film_list
+AS
+SELECT film.film_id AS FID, 
+       film.title AS title, 
+  film.description AS description, 
+  category.name AS category, 
+  film.rental_rate AS price,
+  film.length AS length, 
+  film.rating AS rating, 
+  GROUP_CONCAT(
+    SUBSTR(actor.first_name,1,1)
+  ||lower(
+      SUBSTR(
+        actor.first_name,2,LENGTH(actor.first_name)
+      )
+    )
+  ||' '
+  ||upper(
+      SUBSTR(
+        actor.last_name,1,1
+      )
+    )
+  ||lower(
+      SUBSTR(
+        actor.last_name,2,LENGTH(actor.last_name)
+      )
+    )
+  ,', '
+  ) AS actors
+FROM category 
+LEFT JOIN film_category 
+ON category.category_id = film_category.category_id 
+LEFT JOIN film 
+ON film_category.film_id = film.film_id
+JOIN film_actor 
+ON film.film_id = film_actor.film_id
+JOIN actor 
+ON film_actor.actor_id = actor.actor_id
+GROUP BY film.film_id;
+
+CREATE TABLE payment (
+  payment_id integer primary key autoincrement,
+  customer_id smallint(5)  NOT NULL,
+  staff_id tinyint(3)  NOT NULL,
+  rental_id int(11) DEFAULT NULL,
+  amount decimal(5,2) NOT NULL,
+  payment_date datetime NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_payment_rental FOREIGN KEY (rental_id) REFERENCES rental (rental_id) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT fk_payment_customer FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_payment_staff FOREIGN KEY (staff_id) REFERENCES staff (staff_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE rental (
+  rental_id integer primary key autoincrement,
+  rental_date datetime NOT NULL,
+  inventory_id mediumint(8)  NOT NULL,
+  customer_id smallint(5)  NOT NULL,
+  return_date datetime DEFAULT NULL,
+  staff_id tinyint(3)  NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (rental_date,inventory_id,customer_id),
+  CONSTRAINT fk_rental_staff FOREIGN KEY (staff_id) REFERENCES staff (staff_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_rental_inventory FOREIGN KEY (inventory_id) REFERENCES inventory (inventory_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_rental_customer FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON UPDATE CASCADE
+);
+
+CREATE VIEW sales_by_film_category
+AS
+SELECT c.name AS category
+,      SUM(p.amount) AS total_sales
+FROM payment AS p
+INNER JOIN rental AS r ON p.rental_id = r.rental_id
+INNER JOIN inventory AS i ON r.inventory_id = i.inventory_id
+INNER JOIN film AS f ON i.film_id = f.film_id
+INNER JOIN film_category AS fc ON f.film_id = fc.film_id
+INNER JOIN category AS c ON fc.category_id = c.category_id
+GROUP BY c.name
+ORDER BY total_sales DESC;
+
+CREATE VIEW sales_by_store
+AS
+SELECT c.city||','||cy.country AS store
+,      m.first_name||' '||m.last_name AS manager
+,      SUM(p.amount) AS total_sales
+FROM payment AS p
+INNER JOIN rental AS r ON p.rental_id = r.rental_id
+INNER JOIN inventory AS i ON r.inventory_id = i.inventory_id
+INNER JOIN store AS s ON i.store_id = s.store_id
+INNER JOIN address AS a ON s.address_id = a.address_id
+INNER JOIN city AS c ON a.city_id = c.city_id
+INNER JOIN country AS cy ON c.country_id = cy.country_id
+INNER JOIN staff AS m ON s.manager_staff_id = m.staff_id
+GROUP BY s.store_id
+ORDER BY cy.country, c.city;
+
+CREATE TABLE staff (
+  staff_id INTEGER primary key autoincrement,
+  first_name varchar(45) NOT NULL,
+  last_name varchar(45) NOT NULL,
+  address_id smallint(5)  NOT NULL,
+  picture blob,
+  email varchar(50) DEFAULT NULL,
+  store_id tinyint(3)  NOT NULL,
+  active tinyint(1) NOT NULL DEFAULT '1',
+  username varchar(16) NOT NULL,
+  password varchar(40) DEFAULT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_staff_store FOREIGN KEY (store_id) REFERENCES store (store_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_staff_address FOREIGN KEY (address_id) REFERENCES address (address_id) ON UPDATE CASCADE
+);
+
+CREATE VIEW staff_list
+AS
+SELECT s.staff_id AS ID, 
+       s.first_name||' '||s.last_name AS name, 
+       a.address AS address, 
+       a.postal_code AS zip_code, 
+       a.phone AS phone,
+       city.city AS city, 
+       country.country AS country, 
+       s.store_id AS SID
+FROM staff AS s 
+  JOIN address AS a 
+  ON s.address_id = a.address_id 
+  JOIN city 
+  ON a.city_id = city.city_id
+  JOIN country 
+  ON city.country_id = country.country_id;
+
+CREATE TABLE store (
+  store_id integer primary key autoincrement,
+  manager_staff_id tinyint(3)  NOT NULL,
+  address_id smallint(5)  NOT NULL,
+  last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (manager_staff_id),
+  CONSTRAINT fk_store_staff FOREIGN KEY (manager_staff_id) REFERENCES staff (staff_id) ON UPDATE CASCADE,
+  CONSTRAINT fk_store_address FOREIGN KEY (address_id) REFERENCES address (address_id) ON UPDATE CASCADE
+);
+            </textarea>
+            <div style="width: 49%; height:50%;" id="output">
+            Output
+            </div>
+        </div>
+        
+        <script type="text/javascript" src="example-utils.js"></script>
+        <script type="text/javascript" src="../source/jsparser.js"></script>
+        <script type="text/javascript" src="../source/jsparser.Exception.js"></script>
+        <script type="text/javascript" src="../source/jsparser.RegexTokenizer.js"></script>
+        <script type="text/javascript" src="../source/jsparser.KeywordTokenizer.js"></script>
+        <script type="text/javascript" src="../lib/fulljslint.js"></script>
+        <script type="text/javascript">
+            document.getElementById("tokenize").onclick = function(){
+                try {
+                    var conf = document.getElementById("configuration");
+                    var input = document.getElementById("input");
+                    var output = document.getElementById("output");
+
+                    conf = stringToConf(conf.value);
+
+                    var tokenizer = new jsparser.RegexTokenizer(conf);
+                    tokenizer.setText(input.value);
+                    var t1 = renderTokens(tokenizer, null, tokenizer.nextToken);
+
+                    var kwTokenizer = new jsparser.KeywordTokenizer(conf);
+                    kwTokenizer.setText(input.value);
+                    var t2 = renderTokens(kwTokenizer, null, kwTokenizer.nextToken);
+
+                    output.innerHTML = t1 + t2;
+                } catch (e) {
+                    switch (e){
+                        case "Invalid Configuration":
+                            printJSLintErrors(output)
+                            break;
+                        default:
+                            alert(e);
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

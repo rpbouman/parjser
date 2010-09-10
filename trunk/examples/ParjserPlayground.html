@@ -1,0 +1,235 @@
+<!DOCTYPE HTML
+    PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd"
+>
+<!--
+    Copyright Roland Bouman
+    Roland.Bouman@gmail.com
+    http://rpbouman.blogspot.com/
+ 
+    This file is part of parjser: http://code.google.com/p/parjser
+
+    parjser is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3
+    of the License, or (at your option) any later version.
+
+    parjser is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Lesser Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with parjser.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="Content-Style-Type" content="text/css">
+        <title>Parjser Playground</title>
+        <style type="text/css">
+            h1, p, ol {
+                font-size: 8pt;
+                font-family:sans;
+            }
+            form {
+                font-size: 8pt;
+                font-family:monospace;
+            }
+
+            label:after {
+                content: ":";
+            }
+
+            .node-body {
+                padding-left: 1em;
+            }
+            .node-head {
+                white-space: nowrap;
+            }
+
+            .node-toggle {
+                cursor: pointer;
+            }
+        
+            #left {
+                width: 49%;
+                height:100%;
+                float:left;
+                position: absolute
+            }
+
+            #right {
+                width: 49%;
+                height:100%;
+                left: 51%;
+                position: absolute
+            }
+
+            #configuration {
+                width: 100%;
+                height:100%;
+                float:left
+            }
+
+            #parse {
+                float:right
+            }
+
+            #input {
+                height:33%;
+                width:99%
+            } 
+
+            #output{
+                width: 49%;
+                height:50%
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Parjser Playground</h1>
+        <p>
+            Welcome to the Parjser Playground! To get started with parjser, follow these three steps:
+        </p>
+        <ol>
+            <li>Type a grammar in the "Configuration"
+            textarea on the left-hand side of the page, or choose one of
+            the pre-defined grammars from the "Grammar" listbox.</li>
+            <li>Choose one of the parsers using the "Parser" listbox.
+            All parsers provided by parjser should return the same
+            parse tree, but some may perform better than others
+            (which one may dependend upon your grammar)</li>
+            <li>Type the text you want to parse in the "Input"
+            textarea on the right-hand side of the page</li>
+            <li>Press the "Parse" button. If the parse succeeds, the
+            parse tree will be shown below the input textarea. You can
+            expand and collapse the nodes in the parse tree by clicking
+            on the <code>+</code> or <code>-</code> toggle.
+            If the parse failse, an alert should popup indicating where
+            the error occurred. 
+            </li>
+        </ol> 
+        <form id="form" action="#" method="post">
+            <div id="left">
+
+                <label for="grammar">Grammar</label>
+                <select id="grammar">
+                    <option>custom</option>
+                </select>
+
+                <label for="parser">Parser</label>
+                <select id="parser">
+                    <option></option>
+                </select>
+                
+                <label for="configuration">Configuration</label>
+                <textarea id="configuration" rows="5" cols="80"></textarea>
+            </div>
+            
+            <div id="right">
+                <label for="input">Input Text</label>
+                <button id="parse" type="submit">Parse</button>
+                
+                <textarea id="input" rows="10" cols="80"></textarea>
+                <div id="output">
+                Output
+                </div>
+            </div>
+        </form>
+        
+        <script type="text/javascript" src="../source/parjser.js"></script>
+        <script type="text/javascript" src="../source/parjser.Exception.js"></script>
+        
+        <script type="text/javascript" src="../source/parjser.RegexTokenizer.js"></script>
+        
+        <script type="text/javascript" src="../source/parjser.GrammarCompiler.js"></script>
+        
+        <script type="text/javascript" src="../source/parjser.SimpleTopDownParser.js"></script>
+        <script type="text/javascript" src="../source/parjser.TopDownParser.js"></script>
+        <script type="text/javascript" src="../source/parjser.TopDownParserWithLookahead.js"></script>
+
+        <script type="text/javascript" src="../source/parjser.grammars.arithmetic.js"></script>
+        <script type="text/javascript" src="../source/parjser.grammars.mdx.js"></script>
+        <script type="text/javascript" src="../source/parjser.grammars.sqlite.js"></script>
+        
+        <script type="text/javascript" src="example-utils.js"></script>
+        <script type="text/javascript" src="../lib/fulljslint.js"></script>
+        
+        <script type="text/javascript">
+            var p, s, o;
+
+            s = document.getElementById("grammar");
+            for (p in parjser.grammars) {
+                o = document.createElement("OPTION");
+                o.value = p; o.innerHTML = p;
+                s.appendChild(o);
+            }
+
+            s = document.getElementById("parser");
+            s.innerHTML = "";
+            for (p in parjser) {
+                o = parjser[p];
+                if (typeof(o)!=="function"){
+                    continue;
+                }
+                o = o.prototype;
+                if (typeof(o.parse)!=="function") {
+                    continue;
+                }
+                o = document.createElement("OPTION");
+                o.value = p; o.innerHTML = p;
+                s.appendChild(o);
+            }
+
+            document.getElementById("grammar").onchange = function(){
+                var url, value = this.value;
+                if (typeof(parjser.grammars[value])==="undefined") {
+                    value = "";
+                }
+                else {
+                    var grammar = parjser.grammars[value];
+                    value = serializeGrammar(grammar);
+                }
+                document.getElementById("configuration").value = value;
+            }
+            
+            document.getElementById("form").onsubmit = function(){
+                try {
+                    var conf = document.getElementById("configuration"),
+                        input = document.getElementById("input"),
+                        output = document.getElementById("output"),
+                        parser = document.getElementById("parser"),
+                        parseTree, start, end, interval; 
+
+                    conf = stringToConf(conf.value);
+
+                    start = new Date().getTime();
+                    parser = new parjser[parser.value](conf);
+                    end = new Date().getTime();
+                    interval = end - start;
+                    
+                    start = new Date().getTime();
+                    parseTree = parser.parse(input.value);
+                    end = new Date().getTime();
+
+                    output.innerHTML = "<div>preparation: " +
+                                        (interval) +
+                                        " ms; parsing:" +
+                                        (end-start) +
+                                        " ms</div>" +
+                                        renderNode(parseTree, null);
+                } catch (e) {
+                    switch (e){
+                        case "Invalid Configuration":
+                            printJSLintErrors(output)
+                            break;
+                        default:
+                            alert(e);
+                    }
+                }
+                return false;
+            };
+        </script>
+    </body>
+</html>
