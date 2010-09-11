@@ -132,7 +132,7 @@ parjser.TopDownParser.prototype = {
         rule = {
             func: parjser.TopDownParser.prototype.parseSequence,
             ruleParts: [rule, parjser._EOF],
-            minOccurs: 1, maxOccurs: 1,
+            minOccurs: 1, maxOccurs: 1
         };
 
         this.tokenizer.setText(text);
