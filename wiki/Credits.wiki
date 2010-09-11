@@ -1,0 +1,11 @@
+#summary third-party credits and attribution.
+#labels third-party,attribution,depndencies
+
+= Introduction =
+
+While parjser does not depend directly on any third-party libraries, it is built using a number of external tools and utilities. In addition the Parjser Playground sample page depends on third-party libraries.
+
+This page lists tools, utilities and libraries which are or were used at some point in producting and/or deploying parjser. 
+
+= Google Closure Compiler =
+Parjser uses the [http://code.google.com/closure/ google closure compiler] to compress and optimize its javascript libraries.
