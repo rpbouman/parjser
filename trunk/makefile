@@ -31,21 +31,28 @@ TopDownParserWithLookahead.js:
 parjser.TopDownParserWithLookahead.js: parjser.core.js GrammarCompiler.js TopDownParser.js TopDownParserWithLookahead.js
 	cat js/parjser.core.js tmp/parjser.GrammarCompiler.js tmp/parjser.TopDownParser.js tmp/parjser.TopDownParserWithLookahead.js > js/parjser.TopDownParserWithLookahead.js
 
-SimpleTopDownParser-externs.js:
-	cp source/parjser.SimpleTopDownParser-externs.js tmp/parjser.SimpleTopDownParser-externs.js
+parjser.SimpleTopDownParser-min.js: parjser.SimpleTopDownParser.js
+	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js js/parjser.SimpleTopDownParser.js --js_output_file js/parjser.SimpleTopDownParser-min.js 
 
-parjser.SimpleTopDownParser-min.js: parjser.SimpleTopDownParser.js SimpleTopDownParser-externs.js
-	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --js js/parjser.SimpleTopDownParser.js --js_output_file js/parjser.SimpleTopDownParser-min.js --externs tmp/parjser.SimpleTopDownParser-externs.js
+parjser.TopDownParser-min.js: parjser.TopDownParser.js
+	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js js/parjser.TopDownParser.js --js_output_file js/parjser.TopDownParser-min.js
 
-TopDownParser-externs.js:
-	cp source/parjser.TopDownParser-externs.js tmp/parjser.TopDownParser-externs.js
+parjser.TopDownParserWithLookahead-min.js: parjser.TopDownParserWithLookahead.js
+	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js js/parjser.TopDownParserWithLookahead.js --js_output_file js/parjser.TopDownParserWithLookahead-min.js 
 
-parjser.TopDownParser-min.js: parjser.TopDownParser.js TopDownParser-externs.js
-	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --js js/parjser.TopDownParser.js --js_output_file js/parjser.TopDownParser-min.js --externs tmp/parjser.TopDownParser-externs.js
+parjser.grammars.sqlite.js:
+	cp source/parjser.grammars.sqlite.js js/parjser.grammars.sqlite.js
 
-TopDownParserWithLookahead-externs.js:
-	cp source/parjser.TopDownParserWithLookahead-externs.js tmp/parjser.TopDownParserWithLookahead-externs.js
+parjser.grammars.sqlite-min.js: parjser.grammars.sqlite.js
+	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js js/parjser.grammars.sqlite.js --js_output_file js/parjser.grammars.sqlite-min.js 
 
-parjser.TopDownParserWithLookahead-min.js: parjser.TopDownParserWithLookahead.js TopDownParserWithLookahead-externs.js
-	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --js js/parjser.TopDownParserWithLookahead.js --js_output_file js/parjser.TopDownParserWithLookahead-min.js --externs tmp/parjser.TopDownParserWithLookahead-externs.js
+parjser.grammars.arithmetic.js:
+	cp source/parjser.grammars.arithmetic.js js/parjser.grammars.arithmetic.js
+
+parjser.grammars.arithmetic-min.js: parjser.grammars.arithmetic.js 
+	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js js/parjser.grammars.arithmetic.js --js_output_file js/parjser.grammars.arithmetic-min.js 
+
+parjser: parjser.core.js GrammarCompiler.js SimpleTopDownParser.js TopDownParser.js TopDownParserWithLookahead.js
+	cat js/parjser.core.js tmp/parjser.GrammarCompiler.js tmp/parjser.SimpleTopDownParser.js tmp/parjser.TopDownParser.js tmp/parjser.TopDownParserWithLookahead.js > js/parjser.js
+
 
