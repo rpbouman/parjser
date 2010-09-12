@@ -23,6 +23,7 @@
 
 parjser.SimpleTopDownParser = function(conf) {
     this.init(conf);
+    this.prune = conf.prune;
     return this;
 }
 
@@ -122,8 +123,8 @@ parjser.SimpleTopDownParser.prototype = {
                 if (!parentNode.children) {
                     parentNode.children = [];
                 }
-                parentNode.children.push(node);
                 node.parentNode = parentNode;
+                parentNode.children.push(node);
             }
         }
         else {

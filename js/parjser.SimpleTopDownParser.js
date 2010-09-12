@@ -177,7 +177,7 @@ parjser.RegexTokenizer.prototype = {
                 //calculate capturing groups so we can compensate
                 regex = regex.replace(/\\\\/g, ""); //remove literal backslash first so we can match escaping backslashes
                 regex = regex.replace(/\\\(/g, ""); //remove literal left parenthesis
-                regex = regex.replace(/\(\?!/g, ""); //remove lookahead left parenthesis
+                regex = regex.replace(/\(\?[!:=]/g, ""); //remove lookahead left parenthesis
                 group++;
                 groups.push(group);
                 regexLength = regex.length;
@@ -275,6 +275,7 @@ parjser.RegexTokenizer.prototype = {
 
 parjser.SimpleTopDownParser = function(conf) {
     this.init(conf);
+    this.prune = conf.prune;
     return this;
 }
 
@@ -374,8 +375,8 @@ parjser.SimpleTopDownParser.prototype = {
                 if (!parentNode.children) {
                     parentNode.children = [];
                 }
-                parentNode.children.push(node);
                 node.parentNode = parentNode;
+                parentNode.children.push(node);
             }
         }
         else {
