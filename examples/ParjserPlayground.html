@@ -122,6 +122,9 @@
                 <select id="parser">
                     <option></option>
                 </select>
+
+                <label for="prune">Prune</label>
+                <input id="prune" type="checkbox">
                 
                 <label for="configuration">Configuration</label>
                 <textarea id="configuration" rows="5" cols="80"></textarea>
@@ -206,6 +209,7 @@
 
                     start = new Date().getTime();
                     parser = new parjser[parser.value](conf);
+                    parser.prune = document.getElementById("prune").checked;
                     end = new Date().getTime();
                     interval = end - start;
                     

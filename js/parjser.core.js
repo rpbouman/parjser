@@ -113,7 +113,7 @@ parjser.SyntaxErrorException.prototype.toString = function(){
     "\nwhile parsing " + this.lastSymbol;
 };
 
-}())
+}());
 /*
     Copyright Roland Bouman
     Roland.Bouman@gmail.com
@@ -226,14 +226,12 @@ parjser.RegexTokenizer.prototype = {
         this.offset += matchLength;
         for (i=1, numTokens = match.length; i<numTokens; i++) {
             if (match[groups[i]]) {
-                token = this.tokenNames[i];
                 return {
                     text: match0,
                     len: matchLength,
                     off: offset,
-                    type: token
-                }
-                break;
+                    type: this.tokenNames[i]
+                };
             }
         }
         this.throwNoMatchException();

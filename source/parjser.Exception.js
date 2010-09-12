@@ -77,4 +77,4 @@ parjser.SyntaxErrorException.prototype.toString = function(){
     "\nwhile parsing " + this.lastSymbol;
 };
 
-}())
+}());
