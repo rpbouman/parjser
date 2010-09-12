@@ -66,7 +66,7 @@ parjser.GrammarCompiler.compile = function(conf){
             rules = r;
         }
         compiledGrammar.tokens = tokens;
-    }
+    };
 
     var initTokenizer = function(){
         if (conf.tokenizer) {
@@ -80,7 +80,8 @@ parjser.GrammarCompiler.compile = function(conf){
             });
         }
         compiledGrammar.tokenizer = tokenizer; 
-    }
+    };
+    
     var initStartSymbol = function() {    
         if (conf.startSymbol) {
             startSymbol = conf.startSymbol;
@@ -239,7 +240,7 @@ parjser.GrammarCompiler.compile = function(conf){
             compiledRule.func = parseEmpty;
         }
         return compiledRule;
-    }
+    };
 
     var fixFirst = function(){
         var ruleName, compiledRule, first, symbol, symbols,
@@ -279,7 +280,7 @@ parjser.GrammarCompiler.compile = function(conf){
                 }
             }
         }
-    }
+    };
 
     var makeArray = function(rule){
         var first, token, index, array,
@@ -315,7 +316,7 @@ parjser.GrammarCompiler.compile = function(conf){
             compiledRule = compiledRules[ruleName];
             makeArray(compiledRule);
         }
-    }
+    };
 
     initTokens();
     initTokenizer();
@@ -328,4 +329,4 @@ parjser.GrammarCompiler.compile = function(conf){
     return compiledGrammar;    
 }
 
-}())
+}());
