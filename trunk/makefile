@@ -44,7 +44,7 @@ js/parjser-min.js: js/parjser.js
 	java -jar /usr/share/java/google-closure-compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js js/parjser.js --js_output_file js/parjser-min.js 	
 
 parjser.zip: examples/example-utils.js ParjserPlayground.html js/parjser-min.js js/parjser.grammars-min.js js/parjser.TopDownParser.js js/parjser.TopDownParserWithLookahead.js js/parjser.TopDownParser-min.js js/parjser.TopDownParserWithLookahead-min.js 
-	zip parjser.zip source/* js/* examples/*
+	zip parjser.zip source/* js/* examples/* lib/*
 
 	
 
