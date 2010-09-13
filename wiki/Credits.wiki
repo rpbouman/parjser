@@ -1,5 +1,5 @@
 #summary third-party credits and attribution.
-#labels third-party,attribution,depndencies
+#labels third-party,attribution,dependencies
 
 = Introduction =
 
