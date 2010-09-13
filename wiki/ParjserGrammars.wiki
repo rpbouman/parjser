@@ -39,10 +39,14 @@ For now, it is good to mention that the collection of member names from the `tok
 Another thing to keep in mind symbols is that there are little restrictions with regard to symbol names, as you can use JavaScript regular identifiers as well as quoted identifiers (that is, strings), which can contain almost any character (for example, including whitespace and control characters). However, symbol names must not be equal to one of the strings used to denote an occurrence indicator (which are the strings `"?"`, `"+"`, and `"*"`, and any string matching the regular expression `/\{\d+(,\d+)?\}/`), nor to the string used to denote a choice (which is the pipe `"|"`). Occurrence indicators are explained in detail in the section about sequences, and choices are discussed in their own section.
 
 Finally, it should be pointed out that members of JavaScript objects are unique: there can be only one member with a specific name per object. This means one cannot simply specify multiple rules with the same left-hand side. (More precisely, one can specify them, but only one will be retained, silently discarding the others.) However, multiple rules can be specified for a single symbol by using the choice element. This is explained further in the section dedicated to Choices.
+
 ==Tokens==
+
 The `tokens` member is itself an object that defines the terminal symbols used by the grammar. Each distinct member of the `tokens` member represents a rule defining a terminal symbol. 
 
 The member name is the rule's left-hand side, and can be used as symbol in the rules for the non-terminal symbols. (This is explained in further detail in the next section about the `rules` object.) The member value is the rule's right-hand side, and must be a [http://www.w3schools.com/jsref/jsref_obj_regexp.asp JavaScript regular expression] that matches any string considered valid for that terminal symbol. 
+
+Note that any flags specified for the regular expression appearing at the right hand side of the non-terminal rules are ignored.
 
 By way of example, a grammar that can handle basic arithmetic may have the following `tokens`: 
 {{{
@@ -179,3 +183,30 @@ The `startSymbol` member of the parjser grammar object must be assigned a JavaSc
 The parjser grammar objects support an optional `ignoreTokens` member. The purpose of this member is to allow for specific tokens to appear throughout the input text but which are not considered part of any rules. 
 
 Typical usage for the `ignoreTokens` member is to handle whitespace and comments. Most programming languages allow for whitespace and comments throughout the pieces of text that actually contribute to the running program. While it is possible to explicitly specify the optional occurrence of whitespace and comments between just about any elements in any grammar rule, this is highly unpractical. Instead, you can specify that those tokens are to be ignored.
+
+For example, the following grammar describes addition and subtraction operations, but allows whitespace, C-style comments and C++ single line comments to appear anywhere between operands and operators:
+{{{
+{
+    tokens: {
+        whitespace: /\s+/,
+        single_line_comment: /\/\/[^\n]*\n/,
+        multi_line_comment: /\/\*([^*]|\*(?!\/))*\*\//,
+        number: /\d*\.?\d+([eE][\-+]?\d+)?/,
+        operator: /[\+\-]/ 
+    },
+    ignoreTokens: {
+        whitespace: true, 
+        single_line_comment: true,
+        multi_line_comment: true
+    },
+    rules: {
+        addsub: ["number", ["operator", "addsub"], "*"]
+    },
+    startSymbol: "addsub"
+}
+}}}
+
+Note that those tokens named in the `ignoreTokens` object are consumed from the input, but otherwise completely ignored. This means they also do not appear in the parse tree returned by the parser.
+
+==Case insensitive languages==
+The grammar definition allows for an optional `ignoreCase` member. If the `ignoreCase` member is present and has the boolean value `true`, terminal symbols will be matched in a case-insensitive manner.
