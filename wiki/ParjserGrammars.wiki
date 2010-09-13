@@ -171,3 +171,11 @@ Choices can also appear within sequences. The previous example could have been w
 }}}
 
 Note that occurrence indicators are not allowed as elements of a choice array - occurrence indicators are only allowed as elements of sequence arrays. If you need to specify occurrence for one of the alternatives that appears within a choice, you can turn the alternative into a sequence consisting of one symbol, followed by the desired occurrence indicator.
+
+==Start Symbol==
+The `startSymbol` member of the parjser grammar object must be assigned a JavaScript string that refers to an existing non-terminal symbol. The start symbol identifies the main rule that stands for the language that is described by the grammar.
+
+==Ignored Tokens==
+The parjser grammar objects support an optional `ignoreTokens` member. The purpose of this member is to allow for specific tokens to appear throughout the input text but which are not considered part of any rules. 
+
+Typical usage for the `ignoreTokens` member is to handle whitespace and comments. Most programming languages allow for whitespace and comments throughout the pieces of text that actually contribute to the running program. While it is possible to explicitly specify the optional occurrence of whitespace and comments between just about any elements in any grammar rule, this is highly unpractical. Instead, you can specify that those tokens are to be ignored.
