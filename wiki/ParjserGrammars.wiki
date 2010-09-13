@@ -1,0 +1,7 @@
+#summary This page describes the format of parjser grammars.
+
+= Introduction =
+
+The parjser project does not provide parsers for a particular grammar: rather, it offers generic parsers which can parse text according to a specific grammar. The grammar is passed to the parser's constructor, and the parser can then use the grammar to discover a structure in the input text according to the syntax rules defined in the grammar.
+
+This page provides some background on grammars in general, and provides detailed information about how to create a parjser grammar.
