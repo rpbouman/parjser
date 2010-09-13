@@ -62,10 +62,19 @@ As is the case with the `tokens` object, the member name is the rule's left-hand
 
 A JavaScript string literal appearing as the value of a member of the `rules` object indicates a (terminal or non-terminal) symbol. Either the `tokens` or the `rules` object must have a member with a name equal to the string's value. In other words, any symbol used in the right-hand side of the members of the `rules` object must be defined as either a terminal or a non-terminal symbol.
 
-If an array is used as value for a member of the `rules` object, it can either denote a sequence or a choice.
+If an array is used as value for a member of the `rules` object, it can either denote a sequence or a choice. Sequences indicate the consecutive appearance of its elements. Choices indicate a number of possible rules from which one must be selected. To distinguish choices from sequences, the first array element of a choice array is always the reserved string `"|"`. 
+
+The example below illustrates these different forms of members of the `rules` object:
+{{{
+  rules: {
+    symbol1: "symbol2",                 //string literal indicates a symbol
+    sequence: ["symbol1", "symbol2"],   //array indicates a sequence of symbols
+    choice: ["|", "symbol1", "symbol2"] //choice indicates either symbol could appear
+  }
+}}}
 
 ==Sequences==
-A sequence indicates the consecutive occurrence of its elements. In parjser grammar objects, a sequence is denoted as an array. Array elements can either be JavaScript string literals or JavaScript arrays. 
+A sequence indicates the consecutive appearance of its elements. In parjser grammar objects, a sequence is denoted as an array. Array elements can either be JavaScript string literals or JavaScript arrays. 
 
 Just like an array appearing as value for a member of the `rules` member, a JavaScript array used as element of a sequence array denotes either a sequence or a choice. If a JavaScript string literal is used as element of a sequence array, it can indicate either a (terminal or non-terminal) symbol, or an occurrence indicator.
 
@@ -79,3 +88,4 @@ The collection of reserved strings used to denote occurrence indicators is shown
   * A string matching the regular expression `/\{\d+(,\d+)\}/` indicates an exact indication of occurrence. In English, this regular expression reads: a left curly brace, immediately followed by a positive integer (defined as a sequence the of one or more digits), optionally followed by a comma and another positive integer, immediately followed by a right curly brace. The first integer indicates the minimum number of occurrences of the previous array element. The second integer (if present) indicates the maximum number of occurrences. For example, the occurrence indicator `"?"` could also be written as `"{0,1}"`
 
 ==Choices==
+Choices are denoted using JavaScript arrays.
