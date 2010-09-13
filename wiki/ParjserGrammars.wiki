@@ -36,7 +36,7 @@ The members of the `tokens` and `rules` members each represent a collection of r
 
 For now, it is good to mention that the collection of member names from the `tokens` and `rules` objects must be disjoint - in other words, a name used for a terminal symbol cannot also be used as the name for a non-terminal symbol (and vice versa). 
 
-Another thing to keep in mind symbols is that there are little restrictions with regard to symbol names, as you can use JavaScript regular identifiers as well as strings. However, symbol names must not be equal to one of the strings used to denote an occurrence indicator. Occurrence indicators are explained in detail in the section about sequences. 
+Another thing to keep in mind symbols is that there are little restrictions with regard to symbol names, as you can use JavaScript regular identifiers as well as strings. However, symbol names must not be equal to one of the strings used to denote an occurrence indicator (which are the strings `"?"`, `"+"`, and `"*"`, and any string matching the regular expression `/\{\d+(,\d+)?\}/`), nor to the string used to denote a choice (which is the pipe `"|"`). Occurrence indicators are explained in detail in the section about sequences, and choices are discussed in their own section.
 
 ==Tokens==
 The `tokens` member is itself an object that defines the terminal symbols used by the grammar. Each distinct member of the `tokens` member represents a rule defining a terminal symbol. 
@@ -67,6 +67,12 @@ If an array is used as value for a member of the `rules` object, it can either d
 ==Sequence==
 A sequence indicates the consecutive occurrence of its elements. In parjser grammar objects, a sequence is denoted as an array. Array elements can either be JavaScript string literals or JavaScript arrays. 
 
-If the element of 
+If a JavaScript string literal is used as element of a sequence array, it can indicate either a (terminal or non-terminal) symbol, or an occurrence indicator.
 
+===Occurrence Indicators===
+Occurrence indicators are a collection of reserved strings shown below:
+  * `"?"` indicates optional occurrence: the array element immediately preceding the occurrence indicator may be present, but may also be omitted.
+  * `"+"` indicates indefinitely repeatable occurrence: the array element immediately preceding the occurrence indicator must be present at least once, and may optionally occur anny number of times beyond the initial occurrence
+  * `"*"` indicates optional and indefinitely repeatable occurrence: the array element immediately preceding the occurrence indicator may be present any number of times or be omitted alltogether.
+  * A string matching the regular expression `/\{\d+(,\d+)\}/` indicates an exact indication of occurrence. In English, this regular expression reads: a left curly brace, immediately followed by a positive integer (defined as a sequence the of one or more digits), optionally followed by a comma and another positive integer, immediately followed by a right curly brace. The first integer indicates the minimum number of occurrences of the previous array element. The second integer (if present) indicates the maximum number of occurrences. For example, the occurrence indicator `"?"` could also be written as `"{0,1}"`
 Sequences also support occurrence indicators. These are denoted using 
