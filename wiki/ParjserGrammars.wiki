@@ -78,7 +78,6 @@ A sequence indicates the consecutive appearance of its elements. In parjser gram
 
 Just like an array appearing as value for a member of the `rules` member, a JavaScript array used as element of a sequence array denotes either a sequence or a choice. If a JavaScript string literal is used as element of a sequence array, it can indicate either a (terminal or non-terminal) symbol, or an occurrence indicator.
 
-===Occurrence Indicators===
 Occurrence indicators are reserved strings that may occur as elements of a sequence array. Unlike regular strings, occurrence indicators do not refer to a symbol; rather, they control the number of occurrences of the array element that immediately precedes it.
 
 The collection of reserved strings used to denote occurrence indicators is shown below:
@@ -86,6 +85,57 @@ The collection of reserved strings used to denote occurrence indicators is shown
   * `"+"` indicates indefinitely repeatable occurrence: the array element immediately preceding the occurrence indicator must be present at least once, and may optionally occur anny number of times beyond the initial occurrence
   * `"*"` indicates optional and indefinitely repeatable occurrence: the array element immediately preceding the occurrence indicator may be present any number of times or be omitted alltogether.
   * A string matching the regular expression `/\{\d+(,\d+)\}/` indicates an exact indication of occurrence. In English, this regular expression reads: a left curly brace, immediately followed by a positive integer (defined as a sequence the of one or more digits), optionally followed by a comma and another positive integer, immediately followed by a right curly brace. The first integer indicates the minimum number of occurrences of the previous array element. The second integer (if present) indicates the maximum number of occurrences. For example, the occurrence indicator `"?"` could also be written as `"{0,1}"`
+
+The example below indicates a rule for the `operation` symbol which might be defined to described the syntax for a (binary) arithmetic operator, like plus or minus. The rule's right hand side is a simple sequence, indicating an `"operand"` symbol followed by an `"operator"` symbol, followed by an `"operand"` symbol:
+
+{{{
+  tokens: {
+    ...rules for "operator" and "operand" go here...
+  },
+  rules: {
+    binary_operation: ["operand", "operator", "operand"]
+  },
+  ...
+}}}
+
+The next example illustrates the usage of occurrence indicators and defines a rule which might be defined to describe the syntax for a unary plus or minus operation. The rule's right hand side forms sequence, indicating the optional occurrence of the unary operator, followed by an operand:
+
+{{{
+  tokens: {
+    ...rules for "operator" and "operand" go here...
+  },
+  rules: {
+    unary_operation: ["operator", "?", "operand"]
+  },
+  ... 
+}}} 
+
+Note that the second string literal in the sequence above is an occurrence indicator, and does not refer to a symbol.
+
+The next example demonstrates how to use a sequence within a sequence:
+
+{{{
+  tokens: {
+    ...rules for "operator" and "operand" go here...
+  },
+  rules: {
+    expression: ["operand", ["operator", "operand"], "*"]
+  },
+  ...
+}}}
+
+In the example above, the sequence `["operator", "operand"]` forms a single unit. The optional and repeatable occurrence indicator `"*"` operates on this inner sequence as a whole. Note that an equivalent grammar could be constructed without an inner sequence by creating a separate rule for the inner sequence, and using it's symbol instead of the inner sequence, like so:
+
+{{{
+  tokens: {
+    ...rules for "operator" and "operand" go here...
+  },
+  rules: {
+    expression: ["operand", "expression_tail", "*"],
+    expression_tail: ["operator", "operand"]
+  },
+  ...
+}}}
 
 ==Choices==
 Choices are denoted using JavaScript arrays.
