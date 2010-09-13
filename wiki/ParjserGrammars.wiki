@@ -32,12 +32,13 @@ The general form of a parjser grammar object literal is shown below:
 The structure shown above represents an ordinary JavaScript object literal with the members `tokens`, `ignoreTokens`, `rules`, and `startSymbol`. 
 
 ==Symbols==
-The members of the `tokens` and `rules` members each represent a collection of rules, defining the grammar's terminal and non-terminal symbols respectively. In both cases, the member name is the symbol name that appears at the left-hand side of the rule, and the member value represents the rule's right hand side. Details concerning the definition of right-hand side of the rules is explained in detail in the sections dedicated to the `tokens` and `rules` objects. 
+The members of the `tokens` and `rules` members each represent a collection of rules, defining the grammar's terminal and non-terminal symbols respectively. In both cases, the member name is the symbol name that appears at the left-hand side of the rule, and the member value represents the rule's right hand side. Specifics concerning the definition of right-hand side of the rules is explained in detail in the sections dedicated to the `tokens` and `rules` objects. 
 
 For now, it is good to mention that the collection of member names from the `tokens` and `rules` objects must be disjoint - in other words, a name used for a terminal symbol cannot also be used as the name for a non-terminal symbol (and vice versa). 
 
 Another thing to keep in mind symbols is that there are little restrictions with regard to symbol names, as you can use JavaScript regular identifiers as well as quoted identifiers (that is, strings), which can contain almost any character (for example, including whitespace and control characters). However, symbol names must not be equal to one of the strings used to denote an occurrence indicator (which are the strings `"?"`, `"+"`, and `"*"`, and any string matching the regular expression `/\{\d+(,\d+)?\}/`), nor to the string used to denote a choice (which is the pipe `"|"`). Occurrence indicators are explained in detail in the section about sequences, and choices are discussed in their own section.
 
+Finally, it should be pointed out that members of JavaScript objects are unique: there can be only one member with a specific name per object. This means one cannot simply specify multiple rules with the same left-hand side. (More precisely, one can specify them, but only one will be retained, silently discarding the others.) However, multiple rules can be specified for a single symbol by using the choice element. This is explained further in the section dedicated to Choices.
 ==Tokens==
 The `tokens` member is itself an object that defines the terminal symbols used by the grammar. Each distinct member of the `tokens` member represents a rule defining a terminal symbol. 
 
@@ -62,7 +63,7 @@ As is the case with the `tokens` object, the member name is the rule's left-hand
 
 A JavaScript string literal appearing as the value of a member of the `rules` object indicates a (terminal or non-terminal) symbol. Either the `tokens` or the `rules` object must have a member with a name equal to the string's value. In other words, any symbol used in the right-hand side of the members of the `rules` object must be defined as either a terminal or a non-terminal symbol.
 
-If an array is used as value for a member of the `rules` object, it can either denote a sequence or a choice. Sequences indicate the consecutive appearance of its elements. Choices indicate a number of possible rules from which one must be selected. To distinguish choices from sequences, the first array element of a choice array is always the reserved string `"|"`. 
+If an array is used as value for a member of the `rules` object, it can either denote a sequence or a choice. Sequences indicate the consecutive appearance of its elements. Choices indicate a number of possible rules from which one must be selected. To distinguish choices from sequences, the first array element of a choice array is always the reserved string `"|"` (pipe character). 
 
 The example below illustrates these different forms of members of the `rules` object:
 {{{
@@ -124,7 +125,7 @@ The next example demonstrates how to use a sequence within a sequence:
   ...
 }}}
 
-In the example above, the sequence `["operator", "operand"]` forms a single unit. The optional and repeatable occurrence indicator `"*"` operates on this inner sequence as a whole. Note that an equivalent grammar could be constructed without an inner sequence by creating a separate rule for the inner sequence, and using it's symbol instead of the inner sequence, like so:
+In the example above, the sequence `["operator", "operand"]` forms a single unit. The optional and repeatable occurrence indicator `"*"` operates on this inner sequence as a whole. Note that an equivalent grammar could be constructed without an inner sequence by creating a separate rule for the inner sequence, and using its symbol instead of the inner sequence. This is shown below:
 
 {{{
   tokens: {
@@ -138,4 +139,35 @@ In the example above, the sequence `["operator", "operand"]` forms a single unit
 }}}
 
 ==Choices==
-Choices are denoted using JavaScript arrays.
+Choices are denoted using JavaScript arrays, just like sequences. To distinguish between the two, arrays that denote a choice have the reserved string `"|"` as their first element. Choices allow one to define multiple rules for a single symbol.
+
+The elements of a choice array that appear after the initial special `"|"` string can be strings (indicating a terminal or non-terminal symbol) or arrays (indicating a sequence of a choice). 
+
+The following example illustrates yet another way to define the syntax for a binary operator:
+{{{
+  tokens: {
+    ...rules for "operator" and "number" go here...
+  },
+  rules: {
+    right_operand: ["|", "operation", "number"],
+    operation: ["number", "operator", "right_operand"]
+  },
+  ...
+}}}
+
+In the example above, `operation` is defined as the sequence of a `"number"`, followed by an `"operator"`, followed by a `"right_operand"`. The rule for `right_operand` is a choice (as indicated by the initial string `"|"`) and provides the alternatives `"operation"` and `"number"`.
+
+Choices can also appear within sequences. The previous example could have been written in a more compact manner as shown below:
+
+
+{{{
+  tokens: {
+    ...rules for "operator" and "number" go here...
+  },
+  rules: {
+    operation: ["number", "operator", ["|", "operation", "number"]]
+  },
+  ...
+}}}
+
+Note that occurrence indicators are not allowed as elements of a choice array - occurrence indicators are only allowed as elements of sequence arrays. If you need to specify occurrence for one of the alternatives that appears within a choice, you can turn the alternative into a sequence consisting of one symbol, followed by the desired occurrence indicator.
