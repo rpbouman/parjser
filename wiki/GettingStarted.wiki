@@ -51,6 +51,8 @@ After creating the parser, you can call use it to parse a text by calling its `p
       var parseTree = parser.parse("1+2+3");
   </script>
 }}}
+= The parse tree =
+
 If the text is parsed successfully, the `parse()` method returns the parse tree. The parse tree is an object that reflects the structure of the text (as implied by the grammar). In this case, the parse tree looks something like this:
 {{{
   {
@@ -85,3 +87,6 @@ If the text is parsed successfully, the `parse()` method returns the parse tree.
       ]
   }
 }}}
+= Error Handling =
+
+If the parser cannot parse the text, it throws an exception. You can catch the exception and extract some information that about the kind of error, and where it was encountered.
