@@ -12,26 +12,31 @@ The general form of a parjser grammar object literal is shown below:
 {
   tokens:  {
  
-      _...terminal rules..._
+      ...terminal rules...
      
   },
   ignoreTokens: {
   
-      _...ignorable terminal rules..._
+      ...ignorable terminal rules...
 
   },
   rules:  {
 
-      _...non-terminal rules..._
+      ...non-terminal rules...
 
   },
-  startSymbol: _non-terminal-key_
+  startSymbol: "symbol"
 }
 }}} 
 
 The structure shown above represents an ordinary JavaScript object literal with the members `tokens`, `ignoreTokens`, `rules`, and `startSymbol`. 
 
-The members of the `tokens` and `rules` members each represent a collection of rules, defining the grammar's terminal and non-terminal symbols respectively. This is explained in detail in the following sections. For now, it is good to mention that the collection of member names from the `tokens` and `rules` objects must be disjoint - in other words, a name used for a terminal symbol cannot also be used as the name for a non-terminal symbol (and vice versa).
+==Symbols==
+The members of the `tokens` and `rules` members each represent a collection of rules, defining the grammar's terminal and non-terminal symbols respectively. In both cases, the member name is the symbol name that appears at the left-hand side of the rule, and the member value represents the rule's right hand side. Details concerning the definition of right-hand side of the rules is explained in detail in the sections dedicated to the `tokens` and `rules` objects. 
+
+For now, it is good to mention that the collection of member names from the `tokens` and `rules` objects must be disjoint - in other words, a name used for a terminal symbol cannot also be used as the name for a non-terminal symbol (and vice versa). 
+
+Another thing to keep in mind symbols is that there are little restrictions with regard to symbol names, as you can use JavaScript regular identifiers as well as strings. However, symbol names must not be equal to one of the strings used to denote an occurrence indicator. Occurrence indicators are explained in detail in the section about sequences. 
 
 ==Tokens==
 The `tokens` member is itself an object that defines the terminal symbols used by the grammar. Each distinct member of the `tokens` member represents a rule defining a terminal symbol. 
@@ -60,3 +65,8 @@ A JavaScript string literal appearing as the value of a member of the `rules` ob
 If an array is used as value for a member of the `rules` object, it can either denote a sequence or a choice.
 
 ==Sequence==
+A sequence indicates the consecutive occurrence of its elements. In parjser grammar objects, a sequence is denoted as an array. Array elements can either be JavaScript string literals or JavaScript arrays. 
+
+If the element of 
+
+Sequences also support occurrence indicators. These are denoted using 
