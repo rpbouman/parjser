@@ -4,4 +4,59 @@
 
 The parjser project does not provide parsers for a particular grammar: rather, it offers generic parsers which can parse text according to a specific grammar. The grammar is passed to the parser's constructor, and the parser can then use the grammar to discover a structure in the input text according to the syntax rules defined in the grammar.
 
-This page provides some background on grammars in general, and provides detailed information about how to create a parjser grammar.
+= Grammar Objects =
+Parjser grammars are JavaScript objects. The parjser project currently does not supply a constructor for grammar objects. Instead, they can be created as a JavaScript object literal. 
+
+The general form of a parjser grammar object literal is shown below:
+{{{
+{
+  tokens:  {
+ 
+      _...terminal rules..._
+     
+  },
+  ignoreTokens: {
+  
+      _...ignorable terminal rules..._
+
+  },
+  rules:  {
+
+      _...non-terminal rules..._
+
+  },
+  startSymbol: _non-terminal-key_
+}
+}}} 
+
+The structure shown above represents an ordinary JavaScript object literal with the members `tokens`, `ignoreTokens`, `rules`, and `startSymbol`. 
+
+The members of the `tokens` and `rules` members each represent a collection of rules, defining the grammar's terminal and non-terminal symbols respectively. This is explained in detail in the following sections. For now, it is good to mention that the collection of member names from the `tokens` and `rules` objects must be disjoint - in other words, a name used for a terminal symbol cannot also be used as the name for a non-terminal symbol (and vice versa).
+
+==Tokens==
+The `tokens` member is itself an object that defines the terminal symbols used by the grammar. Each distinct member of the `tokens` member represents a rule defining a terminal symbol. 
+
+The member name is the rule's left-hand side, and can be used as symbol in the rules for the non-terminal symbols. (This is explained in further detail in the next section about the `rules` object.) The member value is the rule's right-hand side, and must be a [http://www.w3schools.com/jsref/jsref_obj_regexp.asp JavaScript regular expression] that matches any string considered valid for that terminal symbol. 
+
+By way of example, a grammar that can handle basic arithmetic may have the following `tokens`: 
+{{{
+  tokens: {
+    number: /\d*\.?\d+([eE][\-+]?\d+)?/,
+    addsub_operator: /[\+\-]/,
+    muldiv_operator: /[\*\/]/,
+    exp_operator: /\^/,
+    lparen: /\(/,
+    rparen: /\)/
+  }
+}}} 
+==Rules==
+
+The `rules` member is itself an object that defines the non-terminal symbols used by the grammar. Each distinct member of the `rules` member represents a rule defining a non-terminal symbol. 
+
+As is the case with the `tokens` object, the member name is the rule's left-hand side. The value of the member represents the right-hand side of the rule, and can be either a JavaScript string literal or an array.
+
+A JavaScript string literal appearing as the value of a member of the `rules` object indicates a (terminal or non-terminal) symbol. Either the `tokens` or the `rules` object must have a member with a name equal to the string's value. In other words, any symbol used in the right-hand side of the members of the `rules` object must be defined as either a terminal or a non-terminal symbol.
+
+If an array is used as value for a member of the `rules` object, it can either denote a sequence or a choice.
+
+==Sequence==
