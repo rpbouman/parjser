@@ -1,4 +1,5 @@
 #summary Getting Started with parjser.
+#labels Featured
 
 = Getting the software =
 
