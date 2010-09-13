@@ -1,0 +1,87 @@
+#summary Getting Started with parjser.
+
+= Getting the software =
+
+Before you can use parjser, you need to obtain the software. You can do a [http://subversion.tigris.org/ subversion] checkout by following the instructions in the [http://code.google.com/p/parjser/source/checkout source area] of the parjser google code project, or download it as a `.zip` file located at the [http://code.google.com/p/parjser/downloads/list download area]. If you choose to download a `.zip` file, you'll need to extract its contents.
+
+= Including parjser in your webpage =
+
+In the root of the parjser project directory, you'll find a `js` directory. This directory contains JavaScript files which are meant for inclusion in web pages. To use parjser in your webpage, you'll need to load at least one of these JavaScript files into your webpage using the `<script>` tag. For now, we'll work with the `parjser.SimpleTopDownParser.js` file:
+{{{
+  <script type="text/javascript" src="js/parjser.SimpleTopDownParser.js"></script>
+}}}
+= Creating a Parser instance =
+
+When including the `parjser.SimpleTopDownParser.js` script in your page, you can create a new parser instance using the following snippet:
+{{{
+  <script type="text/javascript">
+  
+      var grammar = ...
+      var parser = new parjser.SimpleTopDownParser(grammar);
+
+  </script>
+}}}
+= The Grammar =
+
+The `grammar` argument passed to the parser constructor is an object that describes the language which your parser instance can parse. The details of defining a grammar object are documented elsewhere, but for now, let's settle for a grammar that describes a very simple language for adding (positive) integers: 
+{{{
+  <script type="text/javascript">
+      var parser = new parjser.SimpleTopDownParser({
+          startSymbol: "add",
+          tokens: {
+              integer: /[0-9]+/,
+              operator: /\+/
+          },
+          rules: {
+              add: [
+                  "integer", 
+                  ["operator", "add"],"?"
+              ] 
+          }
+      }); 
+  </script>
+}}}
+= Parsing some text =
+
+After creating the parser, you can call use it to parse a text by calling its `parse()` method, passing the text as an argument:
+{{{
+  <script type="text/javascript">
+      var grammar = ...
+      var parser = new parjser.SimpleTopDownParser(grammar);
+      var parseTree = parser.parse("1+2+3");
+  </script>
+}}}
+If the text is parsed successfully, the `parse()` method returns the parse tree. The parse tree is an object that reflects the structure of the text (as implied by the grammar). In this case, the parse tree looks something like this:
+{{{
+  {
+      type: "add",
+      offset: 0,
+      children: [
+          {
+              type: "integer",
+              offset: 0,
+              token: {off: 0, len: 1, text: "1", type: "integer"}
+          },
+          {
+              type: ["operator", "add"],
+              offset: 1,
+              children: [
+                  {
+                      type: "operator",
+                      offset: 1,
+                      token: {off: 1, len: 1, text: "+", type: "operator"}
+                  },
+                  {
+                      type: "add",
+                      offset: 2,
+                      children: [
+
+                          ...continues...
+
+                      ]
+                  }
+              ]
+          }
+      ]
+  }
+}}}
