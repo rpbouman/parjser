@@ -32,11 +32,15 @@
                 font-size: 8pt;
                 font-family:sans;
             }
-            form {
+            form * {
                 font-size: 8pt;
-                font-family:monospace;
+                font-family:sans;
             }
 
+            textarea {
+                font-family:monospace;
+            }
+            
             label:after {
                 content: ":";
             }
@@ -53,22 +57,22 @@
             }
         
             #left {
-                width: 49%;
-                height:100%;
+                width: 48.5%;
+                height:99%;
                 float:left;
                 position: absolute
             }
 
             #right {
-                width: 49%;
-                height:100%;
+                width: 48.5%;
+                height:99%;
                 left: 51%;
                 position: absolute
             }
 
             #configuration {
                 width: 100%;
-                height:100%;
+                height:99%;
                 float:left
             }
 
@@ -99,15 +103,22 @@
             <li>Choose one of the parsers using the "Parser" listbox.
             All parsers provided by parjser should return the same
             parse tree, but some may perform better than others
-            (which one may dependend upon your grammar)</li>
+            (depending upon your grammar).</li>
             <li>Type the text you want to parse in the "Input"
-            textarea on the right-hand side of the page</li>
+            textarea on the right-hand side of the page.</li>
             <li>Press the "Parse" button. If the parse succeeds, the
             parse tree will be shown below the input textarea. You can
             expand and collapse the nodes in the parse tree by clicking
             on the <code>+</code> or <code>-</code> toggle.
-            If the parse failse, an alert should popup indicating where
-            the error occurred. 
+            You can control the depth of the parse tree to some extent
+            with the "Prune" checkbox. When checked, the tree will
+            attempt to make the branches of the parse tree as shallow
+            as possible by omitting nodes that have exactly one child
+            node. The "Prune" checkbox is respected by the TopDownParser
+            and TopDownParserWithLookahead, but not by the
+            SimpleTopDownParser.
+            If the parse fails, an alert should pop up,
+            indicating the location and nature of the error. 
             </li>
         </ol> 
         <form id="form" action="#" method="post">

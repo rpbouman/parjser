@@ -23,7 +23,7 @@
 
 parjser.grammars.sqlite = {
     ignoreCase: true,
-    ignoreTokens: {"whitespace": true},
+    ignoreTokens: {whitespace: true},
     tokens: {
         whitespace: /\s+|--[^\n]*\n|\/\*([^*]|\*(?!\/))*\*\//,
         ABORT: /\bABORT\b/, ACTION: /\bACTION\b/, ADD: /\bADD\b/,
