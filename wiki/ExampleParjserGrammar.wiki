@@ -14,7 +14,7 @@ First, let's consider the grammar as a whole:
   startSymbol: "calculation",
   ignoreTokens: {"whitespace":true},
   tokens:  {
-    whitespace: /\s+|--[^\n]*\n|\/\*([^*]|\*(?!\/))*\*\//,
+    whitespace: /\s+/,
     number: /\d*\.?\d+([eE][\-+]?\d+)?/,
     addsub_operator: /[\+\-]/,
     muldiv_operator: /[\*\/]/,
@@ -33,6 +33,14 @@ First, let's consider the grammar as a whole:
 }
 }}}
 
-=Operator Precedence=
+=The arithmetic Operators=
+The arithmetic grammar defines the following operators:
+
+  * `+` and `-` (matched by the `addsub_operator` terminal rule)
+  * `*` and `/` (matched by the `muldiv_operator` terminal rule)
+  * `^` (matched by the `exp_operator` terminal rule)
+  * `(` and `)` (matched by the terminal rules for `lparen` and `rparen` respectively)
+
+The operators `+`, `-`, `*`, `/` and `^` can all be used as binary operators, that is, they can take both a left and a right operand to perform a calculation upon them. The `+` and `-` operators can also be used as unary operators, effectively determining the sign of the expression at the right-hand side of the operator.
 
 =Operator Associativity=
