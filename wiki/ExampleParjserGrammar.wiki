@@ -1,0 +1,33 @@
+#summary This page provides a walk-through of an example Parjser grammar.
+
+= Introduction =
+
+In order to fully understand parjser grammars, it's helpful to examine an example grammar in detail. For this purpose, we will take a closer look at a parjser grammar that describes basic arithmetic expressions. This grammar is included in the parjser project in the file `parjser.grammars.arithmetic.js`
+
+Note that this page does not discuss the notation and constructs that make up a parjser grammar: this is the topic of [http://code.google.com/p/parjser/wiki/ParjserGrammars another wiki page].
+
+= The arithmetic grammar =
+First, let's consider the grammar as a whole:
+
+{{{
+{
+  startSymbol: "calculation",
+  ignoreTokens: {"whitespace":true},
+  tokens:  {
+    whitespace: /\s+|--[^\n]*\n|\/\*([^*]|\*(?!\/))*\*\//,
+    number: /\d*\.?\d+([eE][\-+]?\d+)?/,
+    addsub_operator: /[\+\-]/,
+    muldiv_operator: /[\*\/]/,
+    exp_operator: /\^/,
+    lparen: /\(/,
+    rparen: /\)/
+  },
+  rules:  {
+    atom: ["|",["lparen","calculation","rparen"],"number"],
+    calculation: ["|","addsub","atom"],
+    addsub: ["addsub_operand",["addsub_operator","addsub_operand"],"*"],
+    addsub_operand: ["muldiv_operand",["muldiv_operator","muldiv_operand"],"*"],
+    muldiv_operand: ["exp_operand",["exp_operator","exp_operand"],"*"],
+    exp_operand: ["addsub_operator","?","atom"]
+  }
+}}}}
