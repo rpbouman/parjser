@@ -2,7 +2,7 @@
 
 = Introduction =
 
-The parjser project does not provide parsers for a particular grammar: rather, it offers generic parsers which can parse text according to a specific grammar. The grammar is passed to the parser's constructor, and the parser can then use the grammar to discover a structure in the input text according to the syntax rules defined in the grammar.
+The parjser project does not provide parsers tailored to parse a particular language. Rather, it offers generic parsers that parse text according to a specific grammar. The grammar is passed to the parser's constructor, and the parser can then use the grammar to discover a structure in the input text according to the syntax rules defined in the grammar.
 
 = Grammar Objects =
 Parjser grammars are JavaScript objects. The parjser project currently does not supply a constructor for grammar objects. Instead, they can be created as a JavaScript object literal. 
