@@ -25,7 +25,7 @@ parjser.SimpleTopDownParser = function(conf) {
     this.init(conf);
     this.prune = conf.prune;
     return this;
-}
+};
 
 parjser.SimpleTopDownParser.prototype = {
     init: function(conf){
@@ -47,10 +47,6 @@ parjser.SimpleTopDownParser.prototype = {
         }
         return r;
     },
-    initTokenBuffer: function(){
-        this.tokenBuffer = [];
-        this.tokenBufferPointer = -1;
-    },
     nextToken: function(){
         var token,
             tokenBufferPointer = ++this.tokenBufferPointer,
@@ -66,7 +62,7 @@ parjser.SimpleTopDownParser.prototype = {
         }
         return token;
     },
-    parseRule: function(rule, parentNode, rulePartIndex, recurrenceIndex){
+    parseRule: function(rule, parentNode){
         var isEOF, success, node = {
             offset: this.tokenizer.offset,
             tokenBufferPointer: this.tokenBufferPointer
@@ -117,8 +113,6 @@ parjser.SimpleTopDownParser.prototype = {
         }
         if (success) {
             node.type = rule;
-            node.rulePartIndex = rulePartIndex;
-            node.recurrenceIndex = recurrenceIndex;
             if(parentNode && (isEOF !== true)) {
                 if (!parentNode.children) {
                     parentNode.children = [];
@@ -199,12 +193,12 @@ parjser.SimpleTopDownParser.prototype = {
                 maxCardinality = 1;
             }
             for (j=0; j<minCardinality; j++) {
-                if (!this.parseRule(element, node, i, j)){
+                if (!this.parseRule(element, node)){
                     return false;
                 }
             }
             for (; j<maxCardinality; j++) {
-                if (!this.parseRule(element, node, i, j)){
+                if (!this.parseRule(element, node)){
                     break;
                 }
             }
@@ -218,7 +212,7 @@ parjser.SimpleTopDownParser.prototype = {
         var i, numElements = array.length, element;
         for (i=1; i<numElements; i++){
             element = array[i];
-            if (this.parseRule(element, node, i)){
+            if (this.parseRule(element, node)){
                 return true;
             }
         }
@@ -249,7 +243,8 @@ parjser.SimpleTopDownParser.prototype = {
         }
         var rule = [symbol, parjser._EOF];
         this.tokenizer.setText(text);
-        this.initTokenBuffer();
+        this.tokenBuffer = [];
+        this.tokenBufferPointer = -1;
         this.tree = {};
         this.lastSymbol = null;
         if (!this.parseRule(rule, this.tree)){

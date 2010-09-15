@@ -26,7 +26,7 @@ parjser.grammars.arithmetic =
   startSymbol: "calculation",
   ignoreTokens: {"whitespace": true},
   tokens: {
-    whitespace: /\s+|--[^\n]*\n|\/\*([^*]|\*(?!\/))*\*\//,
+    whitespace: /\s+/,
     number: /\d*\.?\d+([eE][\-+]?\d+)?/,
     addsub_operator: /[\+\-]/,
     muldiv_operator: /[\*\/]/,
