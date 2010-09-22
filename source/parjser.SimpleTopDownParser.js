@@ -62,11 +62,15 @@ parjser.SimpleTopDownParser.prototype = {
         }
         return token;
     },
-    parseRule: function(rule, parentNode){
-        var isEOF, success, node = {
-            offset: this.tokenizer.offset,
-            tokenBufferPointer: this.tokenBufferPointer
-        };
+    parseRule: function(
+        rule, parentNode,
+        rulePartIndex,                              //index of this rulepart if parentNode is choice or sequence
+        minOccurrence, maxOccurrence, occurrence    //occurrence data in case parentNode is sequence                           
+    ){
+        var isEOF, success,
+            tokenBufferPointer = this.tokenBufferPointer,
+            node = {}
+        ;
         if (rule instanceof Array) {
             if (rule.length===0){
                 success = this.parseEmpty();
@@ -114,6 +118,11 @@ parjser.SimpleTopDownParser.prototype = {
         if (success) {
             node.type = rule;
             if(parentNode && (isEOF !== true)) {
+                node.tokenBufferPointer = tokenBufferPointer;
+                node.rulePartIndex = rulePartIndex;
+                node.minOccurrence = minOccurrence;
+                node.maxOccurrence = maxOccurrence;
+                node.occurrence = occurrence;
                 if (!parentNode.children) {
                     parentNode.children = [];
                 }
@@ -122,7 +131,7 @@ parjser.SimpleTopDownParser.prototype = {
             }
         }
         else {
-            this.tokenBufferPointer = node.tokenBufferPointer;
+            this.tokenBufferPointer = tokenBufferPointer;
         }
         return success;
     },
@@ -193,12 +202,17 @@ parjser.SimpleTopDownParser.prototype = {
                 maxCardinality = 1;
             }
             for (j=0; j<minCardinality; j++) {
-                if (!this.parseRule(element, node)){
+                if (!this.parseRule(
+                    element, node, i,
+                    minCardinality, maxCardinality, j
+                )){
                     return false;
                 }
             }
             for (; j<maxCardinality; j++) {
-                if (!this.parseRule(element, node)){
+                if (!this.parseRule(element, node, i,
+                    minCardinality, maxCardinality, j
+                )){
                     break;
                 }
             }
@@ -212,7 +226,7 @@ parjser.SimpleTopDownParser.prototype = {
         var i, numElements = array.length, element;
         for (i=1; i<numElements; i++){
             element = array[i];
-            if (this.parseRule(element, node)){
+            if (this.parseRule(element, node, i)){
                 return true;
             }
         }
