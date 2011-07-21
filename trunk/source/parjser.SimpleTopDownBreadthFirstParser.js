@@ -86,13 +86,38 @@ parjser.SimpleTopDownBreadthFirstParser.prototype = {
                 position: 0
             }
         ];
-        outer: while (numStates = states.length) {
+        stack: while (numStates = states.length) {
             stack.push(states);
             nextStates = [];
-            inner: for (stateIndex=0; stateIndex<numStates; stateIndex++){
+            states: for (stateIndex=0; stateIndex<numStates; stateIndex++){
                 state = states[stateIndex];
+                if (typeof(state.min)!=="undefined" && state.min===0 && state.nextState){
+                    newState = state.nextState;
+                    states.push({
+                        type: newState.type,
+                        partOf: newState.partOf,
+                        nextState: newState.nextState,
+                        prevCount: newState.prevCount,
+                        min: newState.min,
+                        max: newState.max,
+                        position: state.position
+                    });
+                    numStates++;
+                }
+                if (typeof(state.max)!=="undefined" && state.max===Number.POSITIVE_INFINITY) {
+                    nextStates.push({
+                        type: state.type,
+                        partOf: state.partOf,
+                        nextState: state.nextState,
+                        prevCount: 1,
+                        min: state.min,
+                        max: state.max,
+                        position: state.position
+                    });
+                }
                 rule = state.type;
                 if (typeof(rule)==="string"){
+                    //terminal symbol
                     if (tokens[rule]) {
                         token = this.getToken(state.position);
                         if (token.type===rule){
@@ -113,11 +138,15 @@ parjser.SimpleTopDownBreadthFirstParser.prototype = {
                                 newState.position = state.position + 1;
                                 nextStates.push(newState);
                             }
+                            else {
+                                //not really sure what this case means.
+                            }
                         }
                         else {
                             //dead end, clean up.
                         }
                     }
+                    //non-terminal symbol
                     else {
                         nextStates.push({
                             type: rules[rule],
@@ -129,18 +158,14 @@ parjser.SimpleTopDownBreadthFirstParser.prototype = {
                         if (state.nextState){
                             state.nextState.prevCount++;
                         }
+                        else {
+                            //not really sure what this case meanse
+                        }
                     }
                 }
                 else
                 if (rule instanceof Array) {
                     numRuleParts = rule.length;
-                    if (!rule.length) {
-                        newState = state.nextState;
-                        if (newState) {
-                            nextStates.push(newState);
-                        }
-                    }
-                    else
                     if (rule[0]==="|") {
                         for (rulePartIndex = 1; rulePartIndex < numRuleParts; rulePartIndex++){
                             nextStates.push({
@@ -152,22 +177,51 @@ parjser.SimpleTopDownBreadthFirstParser.prototype = {
                             state.nextState.prevCount++;
                         }
                     }
-                    else {
-                        newState = state.nextState;
-                        for (rulePartIndex = numRuleParts-1; rulePartIndex >= 0; rulePartIndex--){
-                            //todo: determine occurrence
-                            if (newState){
-                                newState.prevCount++;
+                    else {                        
+                        var min, max, rulePart, card, first,
+                            prev = null, first;
+                        first = null;
+                        for (rulePartIndex = 0; rulePartIndex < numRuleParts; rulePartIndex++){
+                            rulePart = rule[rulePartIndex];
+                            if (++rulePartIndex < numRuleParts) {
+                                switch (rule[rulePartIndex]) {
+                                    case "?":
+                                        min = 0; max = 1;
+                                        break;
+                                    case "+":
+                                        min = 1; max = Number.POSITIVE_INFINITY;
+                                        break;
+                                    case "*":
+                                        min = 0; max = Number.POSITIVE_INFINITY;
+                                        break;
+                                    default:
+                                        min = 1; max = 1;
+                                        rulePartIndex--;
+                                }
+                            }
+                            else {
+                                min = 1; max = 1;
+                                rulePartIndex--;
                             }
                             newState = {
-                                type: rule[rulePartIndex],
+                                type: rulePart,
                                 partOf: state,
-                                nextState: newState,
-                                prevCount: 0
+                                min: min,
+                                max: max
                             };
+                            if (first===null){
+                                first = newState;
+                                newState.prevCount = 0
+                            }
+                            if (prev) {
+                                prev.nextState = newState;
+                                newState.prevCount = 1;
+                            }
+                            prev = newState;
                         }
-                        newState.position = state.position;
-                        nextStates.push(newState);
+                        newState.nextState = state.nextState;
+                        first.position = state.position;
+                        nextStates.push(first);
                     }
                 }
                 else
@@ -189,13 +243,16 @@ parjser.SimpleTopDownBreadthFirstParser.prototype = {
                     if (newState) {
                         nextStates.push(newState);
                     }
+                    else {
+                        //not really sure what this case means
+                    }
                 }
                 else {
                     throw "Rule \"" + rule + "\" has the wrong type.";
                 }
-            }
+            }   //end of states loop
             states = nextStates;
-        }
+        }   //end of stack loop
         //todo: throw syntax error exception
         throw "Syntax error";
     },

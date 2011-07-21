@@ -28,17 +28,24 @@
         <meta http-equiv="Content-Style-Type" content="text/css">
         <title>Parjser Playground</title>
         <style type="text/css">
-            h1, p, ol {
+            h1, p, ol, label {
                 font-size: 8pt;
-                font-family:sans;
+                font-family: arial;
             }
+            
             form * {
-                font-size: 8pt;
-                font-family:sans;
             }
 
+            input, textarea, select {
+                font-size: 8pt;
+                font-family: monospace;
+            }
+            
             textarea {
-                font-family:monospace;
+                font-size: 8pt;
+                border-style: solid;
+                border-width: 1px;
+                border-color: black;
             }
             
             label:after {
@@ -88,6 +95,10 @@
             #output{
                 width: 49%;
                 height:50%
+            }
+            #output * {
+                font-family: monospace !important;
+                font-size: 8pt;
             }
         </style>
     </head>
@@ -147,7 +158,7 @@
                 
                 <textarea id="input" rows="10" cols="80"></textarea>
                 <div id="output">
-                Output
+                    <label>Output</label>
                 </div>
             </div>
         </form>
@@ -160,12 +171,14 @@
         <script type="text/javascript" src="../source/parjser.GrammarCompiler.js"></script>
         
         <script type="text/javascript" src="../source/parjser.SimpleTopDownParser.js"></script>
+        <script type="text/javascript" src="../source/parjser.SimpleTopDownParser2.js"></script>
         <script type="text/javascript" src="../source/parjser.SimpleTopDownBreadthFirstParser.js"></script>
         <script type="text/javascript" src="../source/parjser.TopDownParser.js"></script>
         <script type="text/javascript" src="../source/parjser.TopDownParserWithLookahead.js"></script>
 
         <script type="text/javascript" src="../source/parjser.grammars.arithmetic.js"></script>
         <script type="text/javascript" src="../source/parjser.grammars.mdx.js"></script>
+        <script type="text/javascript" src="../source/parjser.grammars.picalculus.js"></script>
         <script type="text/javascript" src="../source/parjser.grammars.sqlite.js"></script>
         
         <script type="text/javascript" src="example-utils.js"></script>
