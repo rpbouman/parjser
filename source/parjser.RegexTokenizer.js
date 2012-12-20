@@ -2,7 +2,7 @@
     Copyright Roland Bouman
     Roland.Bouman@gmail.com
     http://rpbouman.blogspot.com/
- 
+
     This file is part of parjser: http://code.google.com/p/parjser
 
     parjser is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ parjser.RegexTokenizer.prototype = {
             group = 0,
             tokenNames = this.tokenNames,
             groups = this.groups;
-                
+
         for(token in tokens){
             if (re!=="") {
                 re += "|";
@@ -82,7 +82,7 @@ parjser.RegexTokenizer.prototype = {
     setText: function(text){
         this.originalText = text;
         this.text = text;
-        this.offset = 0;
+        this.offset = this.regex.lastIndex = 0;
     },
     next: function(){
         var text = this.text,
@@ -130,6 +130,22 @@ parjser.RegexTokenizer.prototype = {
             "NoMatchFound", this
         );
         throw exception;
+    },
+    tokenize: function(tokenBuffer) {
+        if (typeof(tokenBuffer) === "undefined") {
+          tokenBuffer = [];
+        }
+        var token;
+        try {
+          do {
+            token = this.nextToken();
+            tokenBuffer.push(token);
+          } while (token.type !== "_EOF");
+        }
+        catch (e) {
+          if (e.type !== "NoMatchFound") throw e;
+        }
+        return tokenBuffer;
     }
 };
 
