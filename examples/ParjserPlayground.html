@@ -6,7 +6,7 @@
     Copyright Roland Bouman
     Roland.Bouman@gmail.com
     http://rpbouman.blogspot.com/
- 
+
     This file is part of parjser: http://code.google.com/p/parjser
 
     parjser is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@
                 font-size: 8pt;
                 font-family: arial;
             }
-            
+
             form * {
             }
 
@@ -40,14 +40,14 @@
                 font-size: 8pt;
                 font-family: monospace;
             }
-            
+
             textarea {
                 font-size: 8pt;
                 border-style: solid;
                 border-width: 1px;
                 border-color: black;
             }
-            
+
             label:after {
                 content: ":";
             }
@@ -62,7 +62,7 @@
             .node-toggle {
                 cursor: pointer;
             }
-        
+
             #left {
                 width: 48.5%;
                 height:99%;
@@ -90,7 +90,7 @@
             #input {
                 height:33%;
                 width:99%
-            } 
+            }
 
             #output{
                 width: 49%;
@@ -129,9 +129,9 @@
             and TopDownParserWithLookahead, but not by the
             SimpleTopDownParser.
             If the parse fails, an alert should pop up,
-            indicating the location and nature of the error. 
+            indicating the location and nature of the error.
             </li>
-        </ol> 
+        </ol>
         <form id="form" action="#" method="post">
             <div id="left">
 
@@ -147,29 +147,29 @@
 
                 <label for="prune">Prune</label>
                 <input id="prune" type="checkbox">
-                
+
                 <label for="configuration">Configuration</label>
                 <textarea id="configuration" rows="5" cols="80"></textarea>
             </div>
-            
+
             <div id="right">
                 <label for="input">Input Text</label>
                 <button id="parse" type="submit">Parse</button>
-                
+
                 <textarea id="input" rows="10" cols="80"></textarea>
                 <div id="output">
                     <label>Output</label>
                 </div>
             </div>
         </form>
-        
+
         <script type="text/javascript" src="../source/parjser.js"></script>
         <script type="text/javascript" src="../source/parjser.Exception.js"></script>
-        
+
         <script type="text/javascript" src="../source/parjser.RegexTokenizer.js"></script>
-        
+
         <script type="text/javascript" src="../source/parjser.GrammarCompiler.js"></script>
-        
+
         <script type="text/javascript" src="../source/parjser.SimpleTopDownParser.js"></script>
         <script type="text/javascript" src="../source/parjser.SimpleTopDownParser2.js"></script>
         <script type="text/javascript" src="../source/parjser.SimpleTopDownBreadthFirstParser.js"></script>
@@ -177,13 +177,14 @@
         <script type="text/javascript" src="../source/parjser.TopDownParserWithLookahead.js"></script>
 
         <script type="text/javascript" src="../source/parjser.grammars.arithmetic.js"></script>
+        <script type="text/javascript" src="../source/parjser.grammars.bash.js"></script>
         <script type="text/javascript" src="../source/parjser.grammars.mdx.js"></script>
         <script type="text/javascript" src="../source/parjser.grammars.picalculus.js"></script>
         <script type="text/javascript" src="../source/parjser.grammars.sqlite.js"></script>
-        
+
         <script type="text/javascript" src="example-utils.js"></script>
         <script type="text/javascript" src="../lib/fulljslint.js"></script>
-        
+
         <script type="text/javascript">
             var p, s, o;
 
@@ -221,14 +222,14 @@
                 }
                 document.getElementById("configuration").value = value;
             }
-            
+
             document.getElementById("form").onsubmit = function(){
                 try {
                     var conf = document.getElementById("configuration"),
                         input = document.getElementById("input"),
                         output = document.getElementById("output"),
                         parser = document.getElementById("parser"),
-                        parseTree, start, end, interval; 
+                        parseTree, start, end, interval;
 
                     conf = stringToConf(conf.value);
 
@@ -237,7 +238,7 @@
                     parser.prune = document.getElementById("prune").checked;
                     end = new Date().getTime();
                     interval = end - start;
-                    
+
                     start = new Date().getTime();
                     parseTree = parser.parse(input.value);
                     end = new Date().getTime();
