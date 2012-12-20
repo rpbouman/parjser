@@ -2,7 +2,7 @@
     Copyright Roland Bouman
     Roland.Bouman@gmail.com
     http://rpbouman.blogspot.com/
- 
+
     This file is part of parjser: http://code.google.com/p/parjser
 
     parjser is free software: you can redistribute it and/or modify
@@ -35,7 +35,6 @@ parjser.TopDownParserWithLookahead = function(grammar){
 
 parjser.TopDownParserWithLookahead.prototype = {
     initTokenBuffer: TopDownParserPrototype.initTokenBuffer,
-    nextToken: TopDownParserPrototype.nextToken,
     throwSyntaxErrorException: TopDownParserPrototype.throwSyntaxErrorException,
     parse: TopDownParserPrototype.parse,
     parseEOF: TopDownParserPrototype.parseEOF,
@@ -72,11 +71,11 @@ parjser.TopDownParserWithLookahead.prototype = {
             children
         ;
         if (first){
-        
+
             prune = this.prune;
             func = rule.func;
             maxOccurs = rule.maxOccurs;
-            
+
             for (; i<maxOccurs ; i++) {
                 tokenBufferPointer = this.tokenBufferPointer;
                 lookaheadToken = this.lookaheadToken;
@@ -130,7 +129,7 @@ parjser.TopDownParserWithLookahead.prototype = {
             }
             return true;
         }
-    }    
+    }
 }
 
 }());
