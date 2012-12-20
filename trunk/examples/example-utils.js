@@ -2,7 +2,7 @@
     Copyright Roland Bouman
     Roland.Bouman@gmail.com
     http://rpbouman.blogspot.com/
- 
+
     This file is part of parjser: http://code.google.com/p/parjser
 
     parjser is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ function toggleNode(node){
 function renderNode(node, output){
     var content = "", children = node.children,
         label, type;
-    if (children){ 
+    if (children){
         for (var i=0; i<children.length; i++) {
             content+= renderNode(children[i]);
         }
@@ -90,7 +90,7 @@ function renderNode(node, output){
         else {
             label = JSON.stringify(type);
         }
-        
+
         if (type.symbol) {
             label = type.symbol + ": " + label;
         }
@@ -155,7 +155,7 @@ function serializeGrammar(grammar) {
                     if (r) {
                         value += ",";
                     }
-                    value += "\n    " + i + ": ";
+                    value += "\n    \"" + i + "\": ";
                     r = l[i];
                     if (r instanceof RegExp) {
                         value += r.toString();
@@ -168,8 +168,8 @@ function serializeGrammar(grammar) {
                 value += "\n  }";
                 break;
             default:
-                value += JSON.stringify(grammar[p]); 
-        } 
+                value += JSON.stringify(grammar[p]);
+        }
     }
     return "{\n" + value + "\n}";
 }
