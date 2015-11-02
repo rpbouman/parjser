@@ -1,0 +1,7 @@
+The parjser project provides a number of generic [tokenizers](http://en.wikipedia.org/wiki/Tokenizer#Tokenizer) and [parsers](http://en.wikipedia.org/wiki/Parser), written in [JavaScript](http://en.wikipedia.org/wiki/Javascript). The parjser project focuses on simplicity, small code size, and ease of use - features that should make it a good fit for web applications.
+
+In order to use parjser to parse a specific language, you have to write a [context-free grammar](http://en.wikipedia.org/wiki/Context-free_grammar). A parjser grammar is a JavaScript object literal that defines the syntax rules of the language you want to parse. You can use the grammar to create a new parser by passing it to one of the parser constructors provided by the parjser project.
+
+Once you created a parser, all you need to do is call its `parse()` method, passing the text you want to parse as a string. The parser attempts to parse the text, and returns the [parse tree](http://en.wikipedia.org/wiki/Parse_tree) on success. If the parser fails to parse the text, it throws an exception that contains information such as linenumber and column that helps to identify the syntax error.
+
+The project provides a number of pre-defined grammars and a playground webpage that lets you experiment with parsers and grammars.
